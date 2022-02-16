@@ -1,5 +1,5 @@
-ami_version        = "20211209"
-source_ami_al2     = "amzn2-ami-minimal-hvm-2.0.20211201.0-x86_64-ebs"
+ami_version        = "test"
+source_ami_al2     = "amzn2-ami-kernel-5.10-hvm-2.0.20220207.1-x86_64-gp2"
 source_ami_al2arm  = "amzn2-ami-minimal-hvm-2.0.20211201.0-arm64-ebs"
 ecs_agent_version  = "1.57.1"
 ecs_init_rev       = "1"
