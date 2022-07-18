@@ -17,7 +17,8 @@ source "amazon-ebs" "al2" {
     filters = {
       name = "${var.source_ami_al2}"
     }
-    owners = ["amazon"]
+    owners      = ["amazon"]
+    most_recent = true
   }
   ssh_username = "ec2-user"
   tags = {
@@ -92,7 +93,7 @@ build {
   provisioner "shell" {
     inline_shebang = "/bin/sh -ex"
     inline = [
-      "sudo yum install -y ${local.packages}"
+      "sudo yum install -y ${local.packages_al2}"
     ]
   }
 
@@ -136,7 +137,8 @@ build {
       "INIT_REV=${var.ecs_init_rev}",
       "AL_NAME=amzn2",
       "AIR_GAPPED=${var.air_gapped}",
-      "ECS_INIT_URL=${var.ecs_init_url_al2}"
+      "ECS_INIT_URL=${var.ecs_init_url_al2}",
+      "ECS_INIT_LOCAL_OVERRIDE=${var.ecs_init_local_override}"
     ]
   }
 
