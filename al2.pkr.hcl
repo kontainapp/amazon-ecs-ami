@@ -1,11 +1,11 @@
 locals {
-  ami_name_al2 = "${var.ami_name_prefix_al2}-hvm-2.0.${var.ami_version}-x86_64-ebs"
+  ami_name_al2 = "kontain-ecs-${var.ami_name_prefix_al2}-hvm-2.0.${var.ami_version}-x86_64-ebs"
 }
 
 source "amazon-ebs" "al2" {
   ami_name        = "${local.ami_name_al2}"
   ami_description = "Amazon Linux AMI 2.0.${var.ami_version} x86_64 ECS HVM GP2"
-  instance_type   = "c5.large"
+  instance_type   = "t2.micro"
   launch_block_device_mappings {
     volume_size           = var.block_device_size_gb
     delete_on_termination = true
@@ -95,6 +95,15 @@ build {
     inline = [
       "sudo yum install -y ${local.packages_al2}"
     ]
+  }
+
+  provisioner "shell" {
+    script = "scripts/install-yum-utils.sh"
+    expect_disconnect = true
+  }
+
+  provisioner "shell" {
+    script = "scripts/build-kkm.sh"
   }
 
   provisioner "shell" {
