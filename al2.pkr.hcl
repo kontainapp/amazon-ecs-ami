@@ -1,10 +1,12 @@
 locals {
   ami_name_al2 = "kontain-ecs-${var.ami_name_prefix_al2}-hvm-2.0.${var.ami_version}-x86_64-ebs"
+  km_build = "../../../build"
+  target_tmp = "/tmp/"
 }
 
 source "amazon-ebs" "al2" {
   ami_name        = "${local.ami_name_al2}"
-  ami_description = "Amazon Linux AMI 2.0.${var.ami_version} x86_64 ECS HVM GP2"
+  ami_description = "Kontain Amazon Linux AMI 2.0.${var.ami_version} x86_64 ECS HVM GP2"
   instance_type   = "t2.micro"
   launch_block_device_mappings {
     volume_size           = var.block_device_size_gb
@@ -13,6 +15,7 @@ source "amazon-ebs" "al2" {
     device_name           = "/dev/xvda"
   }
   region = var.region
+  ami_groups = ["all"]
   source_ami_filter {
     filters = {
       name = "${var.source_ami_al2}"
@@ -51,6 +54,16 @@ build {
       "sudo chown root:root /etc/cloud/cloud.cfg.d/90_ecs.cfg"
     ]
   }
+
+  provisioner "file" {
+    sources     = ["${local.km_build}/kontain_bin.tar.gz"]
+    destination = local.target_tmp
+  }
+
+  provisioner "shell" {
+    script = "scripts/build-kkm.sh"
+  }
+
 
   provisioner "file" {
     source      = "files/29-ecs-banner-begin.sh.amzn2"
@@ -103,10 +116,6 @@ build {
   }
 
   provisioner "shell" {
-    script = "scripts/build-kkm.sh"
-  }
-
-  provisioner "shell" {
     script = "scripts/install-docker.sh"
     environment_vars = [
       "DOCKER_VERSION=${var.docker_version}",
@@ -143,10 +152,6 @@ build {
   }
 
   provisioner "shell" {
-    script = "scripts/install-additional-packages.sh"
-  }
-
-  provisioner "shell" {
     script = "scripts/install-exec-dependencies.sh"
     environment_vars = [
       "REGION=${var.region}",
@@ -180,15 +185,20 @@ build {
   }
 
   provisioner "shell" {
+    script = "scripts/install-additional-packages.sh"
+  }
+
+  provisioner "shell" {
     script = "scripts/enable-services.sh"
   }
+
 
   provisioner "shell" {
     script = "scripts/cleanup.sh"
   }
 
   post-processor "manifest" {
-    output     = "manifest.json"
+    output     = "manifest-al2.json"
     strip_path = true
   }
 }

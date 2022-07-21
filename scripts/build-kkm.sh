@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-set -ex
+s
+readonly storage="/tmp"
 
-curl -L -o kontain_bin.tar.gz "https://muth-scratch.s3.amazonaws.com/kontain_bin.tar.gz"
-sudo mkdir /kontain_bin
-sudo tar -xvf kontain_bin.tar.gz -C /kontain_bin
-rm kontain_bin.tar.gz
+INSTALL_DIR="/opt/kontain/bin"
 
-# Install KM Binaries
-sudo mkdir -p /opt/kontain/bin
-sudo cp /kontain_bin/km/km /opt/kontain/bin/km
-sudo cp /kontain_bin/container-runtime/krun-label-trigger /opt/kontain/bin/krun-label-trigger
+sudo tar -xf ${storage}/kontain_bin.tar.gz  -C ${storage}
 
 # Compile and install kkm driver
 echo "build and install KKM driver"
-sudo /kontain_bin/kkm.run
+sudo ${storage}/kkm.run
+
+# Install KM Binaries
+sudo mkdir -p ${INSTALL_DIR}
+sudo cp ${storage}/km/km ${INSTALL_DIR}/km
+sudo cp ${storage}/container-runtime/krun-label-trigger ${INSTALL_DIR}/krun-label-trigger
+sudo cp ${storage}/cloud/k8s/deploy/shim/containerd-shim-krun-v2 /usr/bin/containerd-shim-krun-v2
