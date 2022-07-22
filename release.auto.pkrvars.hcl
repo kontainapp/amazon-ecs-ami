@@ -8,3 +8,4 @@ source_ami_al2arm           = "amzn2-ami-minimal-hvm-2.0.20220606.1-arm64-ebs"
 source_ami_al2022           = "al2022-ami-minimal-2022.0.20220531.0-kernel-5.15-x86_64"
 source_ami_al2022arm        = "al2022-ami-minimal-2022.0.20220531.0-kernel-5.15-arm64"
 distribution_release_al2022 = "2022.0.20220531"
+
