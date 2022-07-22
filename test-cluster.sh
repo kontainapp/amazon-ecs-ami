@@ -59,7 +59,7 @@ cat << EOF > instance_user_data.txt
 echo ECS_CLUSTER=${cluster_name} >> /etc/ecs/ecs.config
 EOF
 
-cat <<EOF > tast_def.json
+cat <<EOF > task_def.json
 {
     "family": "$task_family",
     "executionRoleArn": "arn:aws:iam::782340374253:role/ecsTaskExecutionRole",
@@ -123,7 +123,7 @@ do
 done
 
 echo registering task definition
-TASK_REVISION=$(aws --region ${region} ecs register-task-definition --cli-input-json file://tast_def.json | jq -r '.taskDefinition | .revision')
+TASK_REVISION=$(aws --region ${region} ecs register-task-definition --cli-input-json file://task_def.json | jq -r '.taskDefinition | .revision')
 echo TASK_REVISION = ${TASK_REVISION}
 
 echo run task
