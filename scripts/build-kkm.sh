@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-s
+
 readonly storage="/tmp"
 
 INSTALL_DIR="/opt/kontain/bin"
