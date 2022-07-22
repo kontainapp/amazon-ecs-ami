@@ -7,7 +7,7 @@ locals {
 source "amazon-ebs" "al2" {
   ami_name        = "${local.ami_name_al2}"
   ami_description = "Kontain Amazon Linux AMI 2.0.${var.ami_version} x86_64 ECS HVM GP2"
-  instance_type   = "t2.micro"
+  instance_type   = "c5.large"
   launch_block_device_mappings {
     volume_size           = var.block_device_size_gb
     delete_on_termination = true
