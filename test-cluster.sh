@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #set -x
 
 region=us-west-1
@@ -136,7 +136,7 @@ echo get page
 ERROR_CODE=0
 PAGE=$(curl --data x= http://${INSTANCE_PUBLIC_IP} | grep "kontain.KKM")
 echo ${PAGE}
-if [ -z ${PAGE} ]; then
+if [ -z "${PAGE}" ]; then
     echo Error: DWEB did not return expected page
     ERROR_CODE=1
 else
