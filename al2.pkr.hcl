@@ -25,6 +25,7 @@ source "amazon-ebs" "al2" {
   }
   ssh_username = "ec2-user"
   tags = {
+    Name                = "${local.ami_name_al2}"
     os_version          = "Amazon Linux 2"
     source_image_name   = "{{ .SourceAMIName }}"
     ecs_runtime_version = "Docker version ${var.docker_version}"
