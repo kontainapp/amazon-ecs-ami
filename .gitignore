@@ -5,3 +5,4 @@ shfmt
 shellcheck
 *.idea
 *.DS_Store
+manifest-al2.json

@@ -1,10 +1,12 @@
 locals {
-  ami_name_al2 = "${var.ami_name_prefix_al2}-hvm-2.0.${var.ami_version}-x86_64-ebs"
+  ami_name_al2 = "kontain-ecs-${var.ami_name_prefix_al2}-hvm-2.0.${var.ami_version}-x86_64-ebs"
+  km_build = "../../../build"
+  target_tmp = "/tmp/"
 }
 
 source "amazon-ebs" "al2" {
   ami_name        = "${local.ami_name_al2}"
-  ami_description = "Amazon Linux AMI 2.0.${var.ami_version} x86_64 ECS HVM GP2"
+  ami_description = "Kontain Amazon Linux AMI 2.0.${var.ami_version} x86_64 ECS HVM GP2"
   instance_type   = "c5.large"
   launch_block_device_mappings {
     volume_size           = var.block_device_size_gb
@@ -13,6 +15,7 @@ source "amazon-ebs" "al2" {
     device_name           = "/dev/xvda"
   }
   region = var.region
+  ami_groups = ["all"]
   source_ami_filter {
     filters = {
       name = "${var.source_ami_al2}"
@@ -20,8 +23,10 @@ source "amazon-ebs" "al2" {
     owners      = ["amazon"]
     most_recent = true
   }
+  ssh_interface = "public_ip"
   ssh_username = "ec2-user"
   tags = {
+    Name                = "${local.ami_name_al2}"
     os_version          = "Amazon Linux 2"
     source_image_name   = "{{ .SourceAMIName }}"
     ecs_runtime_version = "Docker version ${var.docker_version}"
@@ -53,6 +58,16 @@ build {
       "sudo chown root:root /etc/cloud/cloud.cfg.d/90_ecs.cfg"
     ]
   }
+
+  provisioner "file" {
+    sources     = ["${local.km_build}/kontain_bin.tar.gz"]
+    destination = local.target_tmp
+  }
+
+  provisioner "shell" {
+    script = "scripts/build-kkm.sh"
+  }
+
 
   provisioner "file" {
     source      = "files/29-ecs-banner-begin.sh.amzn2"
@@ -100,6 +115,11 @@ build {
   }
 
   provisioner "shell" {
+    script = "scripts/install-yum-utils.sh"
+    expect_disconnect = true
+  }
+
+  provisioner "shell" {
     script = "scripts/install-docker.sh"
     environment_vars = [
       "DOCKER_VERSION=${var.docker_version}",
@@ -133,10 +153,6 @@ build {
       "ECS_INIT_URL=${var.ecs_init_url_al2}",
       "ECS_INIT_LOCAL_OVERRIDE=${var.ecs_init_local_override}"
     ]
-  }
-
-  provisioner "shell" {
-    script = "scripts/install-additional-packages.sh"
   }
 
   provisioner "shell" {
@@ -178,8 +194,13 @@ build {
   }
 
   provisioner "shell" {
+    script = "scripts/install-additional-packages.sh"
+  }
+
+  provisioner "shell" {
     script = "scripts/enable-services.sh"
   }
+
 
   provisioner "shell" {
     script = "scripts/install-service-connect-appnet.sh"
@@ -190,7 +211,7 @@ build {
   }
 
   post-processor "manifest" {
-    output     = "manifest.json"
+    output     = "manifest-al2.json"
     strip_path = true
   }
 }
