@@ -3,6 +3,7 @@ set -ex
 
 ARCH=$(uname -m)
 
+
 # install any rpm packages from the additional-packages/ directory
 if ls /tmp/additional-packages/*."${ARCH}".rpm; then
     echo "Found additional packages with architecture ${ARCH} to be installed"
@@ -16,3 +17,18 @@ if ls /tmp/additional-packages/*.noarch.rpm; then
 else
     echo "No matching additional packages with no architecture found"
 fi
+
+################################################################################
+### Kontain ########################################################################
+###############################################################################
+
+cat << EOT | sudo tee /etc/docker/daemon.json
+{
+    "default-runtime": "krun",
+    "runtimes": {
+        "krun": {
+            "path": "/opt/kontain/bin/krun-label-trigger"
+        }
+    }
+}
+EOT
