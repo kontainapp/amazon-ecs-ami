@@ -15,7 +15,7 @@ source "amazon-ebs" "al2" {
     device_name           = "/dev/xvda"
   }
   region = var.region
-  ami_groups = ["all"]
+  ami_groups = var.ami_groups
   source_ami_filter {
     filters = {
       name = "${var.source_ami_al2}"
@@ -33,6 +33,7 @@ source "amazon-ebs" "al2" {
     ecs_agent_version   = "${var.ecs_agent_version}"
     ami_type            = "al2"
     ami_version         = "2.0.${var.ami_version}"
+    Release             = "${var.ami_version}"
   }
 }
 

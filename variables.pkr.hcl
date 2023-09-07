@@ -35,6 +35,12 @@ variable "region" {
   description = "Region to build the AMI in."
 }
 
+variable "ami_groups" {
+    type = list(string)
+    description = "Which groups have access."
+    default = []
+}
+
 variable "block_device_size_gb" {
   type        = number
   default     = 30
