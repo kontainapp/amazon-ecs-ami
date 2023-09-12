@@ -47,7 +47,7 @@ al1: check-region init validate release.auto.pkrvars.hcl
 
 .PHONY: al2
 al2: check-region init validate release.auto.pkrvars.hcl
-	./packer build -machine-readable -only="amazon-ebs.al2" -var "region=${REGION}" -var "ami_version=${AMI_VERSION}" .
+	./packer build -machine-readable -only="amazon-ebs.al2" -var "region=${REGION}" -var "ami_version=${AMI_VERSION}" -var 'ami_groups=${AMI_GROUPS}' .
 
 test-al2: 
 	./test-cluster.sh --region=${REGION} --ami=$(shell cat manifest-al2.json | jq -r '.builds[-1].artifact_id' |  cut -d':' -f2)
